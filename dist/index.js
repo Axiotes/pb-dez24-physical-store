@@ -8,4 +8,4 @@ const app = (0, express_1.default)();
 app.get("/", (req, res) => {
     res.status(200).send("Hello World");
 });
-app.listen(3000);
+exports.default = app;
