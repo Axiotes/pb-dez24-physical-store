@@ -20,6 +20,5 @@ exports.default = () => {
             }
         });
     });
-    console.log(`Seed concluido com sucesso!`);
     connection_1.default.end();
 };

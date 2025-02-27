@@ -19,6 +19,5 @@ export default (): void => {
     });
   });
 
-  console.log(`Seed concluido com sucesso!`);
   connection.end();
 };
