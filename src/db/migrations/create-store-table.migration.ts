@@ -15,7 +15,7 @@ export default (): void => {
             state VARCHAR(20) NOT NULL,
             region VARCHAR(21) NOT NULL,
             latitude VARCHAR(255) NOT NULL,
-            logitude VARCHAR(255) NOT NULL
+            longitude VARCHAR(255) NOT NULL
         );
     `;
 

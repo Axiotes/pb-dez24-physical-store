@@ -5,7 +5,8 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "tsc -w & nodemon dist/server.js",
-    "migrations": "ts-node src/db/migrations/run-migrations.ts"
+    "migrations": "ts-node src/db/migrations/run-migrations.ts",
+    "seed": "ts-node src/db/seeders/run-seeders.ts"
   },
   "author": "Arthur Axiotes",
   "license": "ISC",
