@@ -3,9 +3,5 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const app = (0, express_1.default)();
-app.get("/", (req, res) => {
-    res.status(200).send("Hello World");
-});
-exports.default = app;
+const create_store_table_migration_1 = __importDefault(require("./create-store-table.migration"));
+(0, create_store_table_migration_1.default)();
