@@ -61,9 +61,25 @@ class StoreController {
                 const address = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
                 const geocodeRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
                 const location = geocodeRes.data.results[0].geometry.location;
-                const results = yield this.getStoreLocations();
-                console.log(results);
-                res.send(geocodeRes.data.results[0].geometry.location);
+                const stores = yield this.getStores();
+                let closers = [];
+                for (let i = 0; i <= stores.length; i++) {
+                    const store = stores[i];
+                    if (!store) {
+                        continue;
+                    }
+                    const directionsRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${location.lat},${location.lng}&destination=${store.lat},${store.lng}&key=${apiKey}`);
+                    const distance = directionsRes.data.routes[0].legs[0].distance;
+                    const duration = directionsRes.data.routes[0].legs[0].duration;
+                    if (distance.value <= 100000) {
+                        closers.push({
+                            store,
+                            distance: distance.text,
+                            duration: duration.text,
+                        });
+                    }
+                }
+                res.send(closers);
             }
             catch (err) {
                 console.log(err);
@@ -73,7 +89,7 @@ class StoreController {
             }
         });
     }
-    getStoreLocations() {
+    getStores() {
         return __awaiter(this, void 0, void 0, function* () {
             return new Promise((resolve, reject) => {
                 connection_1.default.query("SELECT * FROM stores", (err, result) => {

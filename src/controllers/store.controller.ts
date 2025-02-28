@@ -4,6 +4,8 @@ import { ViaCepResponse } from "../interfaces/viacep-response.interface";
 import * as dotenv from "dotenv";
 import connection from "../db/connection";
 import { Store } from "../interfaces/store.interface";
+import { Location } from "../interfaces/location.interface";
+import { RouteInfo } from "../interfaces/route-info.interface";
 
 dotenv.config();
 
@@ -20,7 +22,6 @@ export class StoreController {
         `https://viacep.com.br/ws/${cep}/json`
       );
       const data = viaCepRes.data;
-
       const address = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
 
       const geocodeRes = await axios.get(
@@ -30,10 +31,35 @@ export class StoreController {
       );
       const location: Location = geocodeRes.data.results[0].geometry.location;
 
-      const results: Store[] = await this.getStoreLocations();
-      console.log(results);
+      const stores: Store[] = await this.getStores();
+      let closers: { store: Store; distance: string; duration: string }[] = [];
 
-      res.send(geocodeRes.data.results[0].geometry.location);
+      for (let i = 0; i <= stores.length; i++) {
+        const store = stores[i];
+
+        if (!store) {
+          continue;
+        }
+
+        const directionsRes = await axios.get(
+          `https://maps.googleapis.com/maps/api/directions/json?origin=${location.lat},${location.lng}&destination=${store.lat},${store.lng}&key=${apiKey}`
+        );
+
+        const distance: RouteInfo =
+          directionsRes.data.routes[0].legs[0].distance;
+        const duration: RouteInfo =
+          directionsRes.data.routes[0].legs[0].duration;
+
+        if (distance.value <= 100000) {
+          closers.push({
+            store,
+            distance: distance.text,
+            duration: duration.text,
+          });
+        }
+      }
+
+      res.send(closers);
     } catch (err) {
       console.log(err);
       res.status(500).send({
@@ -42,7 +68,7 @@ export class StoreController {
     }
   };
 
-  private async getStoreLocations(): Promise<Store[]> {
+  private async getStores(): Promise<Store[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM stores", (err: any, result: Store[]) => {
         if (err) {

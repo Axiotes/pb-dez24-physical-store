@@ -6,7 +6,7 @@ export default (): void => {
 
   STORES.forEach((store) => {
     const sql = `
-        INSERT INTO stores (name, cep, street, city, number, neighborhood, state, region, latitude, longitude)
+        INSERT INTO stores (name, cep, street, city, number, neighborhood, state, region, lat, lng)
         VALUES ('${store.name}', '${store.cep}', '${store.street}', '${store.city}', ${store.number}, 
         '${store.neighborhood}', '${store.state}', '${store.region}', '${store.lat}', '${store.lng}');
     `;
