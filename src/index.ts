@@ -1,8 +1,10 @@
 import express, { Express } from "express";
-import storeRouter from "./routes/store.route";
+import { StoreRoutes } from "./routes/store.route";
 
 const app: Express = express();
 
-app.use("api/v1/store", storeRouter);
+const storeRouter = new StoreRoutes();
+
+app.use("/api/v1/store", storeRouter.storeRouter);
 
 export default app;
