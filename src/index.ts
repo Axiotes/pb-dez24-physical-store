@@ -1,9 +1,8 @@
 import express, { Express } from "express";
+import storeRouter from "./routes/store.route";
 
 const app: Express = express();
 
-app.get("/", (req, res) => {
-  res.status(200).send("Hello World");
-});
+app.use("api/v1/store", storeRouter);
 
 export default app;
