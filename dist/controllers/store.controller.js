@@ -48,10 +48,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.StoreController = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dotenv = __importStar(require("dotenv"));
+const connection_1 = __importDefault(require("../db/connection"));
 dotenv.config();
 class StoreController {
-    closerStore(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
+    constructor() {
+        this.closerStore = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
             try {
@@ -60,6 +61,8 @@ class StoreController {
                 const address = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
                 const geocodeRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
                 const location = geocodeRes.data.results[0].geometry.location;
+                const results = yield this.getStoreLocations();
+                console.log(results);
                 res.send(geocodeRes.data.results[0].geometry.location);
             }
             catch (err) {
@@ -68,6 +71,19 @@ class StoreController {
                     message: "Houve um erro ao obter seu endereço, tente novamente!",
                 });
             }
+        });
+    }
+    getStoreLocations() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return new Promise((resolve, reject) => {
+                connection_1.default.query("SELECT * FROM stores", (err, result) => {
+                    if (err) {
+                        console.log(err);
+                        return reject(err);
+                    }
+                    resolve(result);
+                });
+            });
         });
     }
 }

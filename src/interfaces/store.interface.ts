@@ -8,6 +8,6 @@ export interface Store {
   neighborhood: string;
   state: string;
   region: string;
-  latitude: string;
-  longitude: string;
+  lat: number;
+  lng: number;
 }

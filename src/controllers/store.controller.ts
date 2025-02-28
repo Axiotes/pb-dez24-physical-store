@@ -2,14 +2,16 @@ import axios, { AxiosResponse } from "axios";
 import { Request, Response } from "express";
 import { ViaCepResponse } from "../interfaces/viacep-response.interface";
 import * as dotenv from "dotenv";
+import connection from "../db/connection";
+import { Store } from "../interfaces/store.interface";
 
 dotenv.config();
 
 export class StoreController {
-  public async closerStore(
+  public closerStore = async (
     req: Request<{ cep: string }>,
     res: Response
-  ): Promise<void> {
+  ): Promise<void> => {
     const cep: string = req.params.cep;
     const apiKey = process.env.API_KEY;
 
@@ -26,7 +28,10 @@ export class StoreController {
           address
         )}&key=${apiKey}`
       );
-      const location = geocodeRes.data.results[0].geometry.location;
+      const location: Location = geocodeRes.data.results[0].geometry.location;
+
+      const results: Store[] = await this.getStoreLocations();
+      console.log(results);
 
       res.send(geocodeRes.data.results[0].geometry.location);
     } catch (err) {
@@ -35,5 +40,18 @@ export class StoreController {
         message: "Houve um erro ao obter seu endereço, tente novamente!",
       });
     }
+  };
+
+  private async getStoreLocations(): Promise<Store[]> {
+    return new Promise((resolve, reject) => {
+      connection.query("SELECT * FROM stores", (err: any, result: Store[]) => {
+        if (err) {
+          console.log(err);
+          return reject(err);
+        }
+
+        resolve(result);
+      });
+    });
   }
 }

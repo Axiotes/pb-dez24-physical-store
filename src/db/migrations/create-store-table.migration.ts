@@ -14,8 +14,8 @@ export default (): void => {
             neighborhood VARCHAR(60) NOT NULL,
             state VARCHAR(20) NOT NULL,
             region VARCHAR(21) NOT NULL,
-            latitude VARCHAR(255) NOT NULL,
-            longitude VARCHAR(255) NOT NULL
+            lat VARCHAR(255) NOT NULL,
+            lng VARCHAR(255) NOT NULL
         );
     `;
 
