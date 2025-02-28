@@ -4,10 +4,10 @@ exports.validateCep = void 0;
 const validateCep = (req, res, next) => {
     const cep = req.params.cep;
     if (cep.length !== 8) {
-        throw new Error("CEP deve ter 8 números");
+        res.status(400).send({ message: "CEP deve ter 8 números" });
     }
     if (/[a-zA-Z]/.test(cep)) {
-        throw new Error("Não é permitido letras em um CEP");
+        res.status(400).send({ message: "Não é permitido letras em um CEP" });
     }
     next();
 };
