@@ -74,17 +74,18 @@ class StoreController {
                     if (distance.value <= 100000) {
                         closers.push({
                             store,
-                            distance: distance.text,
-                            duration: duration.text,
+                            distance,
+                            duration,
                         });
                     }
                 }
+                closers = closers.sort((a, b) => a.distance.value - b.distance.value);
                 res.send(closers);
             }
             catch (err) {
                 console.log(err);
                 res.status(500).send({
-                    message: "Houve um erro ao obter seu endereço, tente novamente!",
+                    message: "Houve um erro ao procuras lojas mais próximas, tente novamente!",
                 });
             }
         });

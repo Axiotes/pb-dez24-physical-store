@@ -32,7 +32,11 @@ export class StoreController {
       const location: Location = geocodeRes.data.results[0].geometry.location;
 
       const stores: Store[] = await this.getStores();
-      let closers: { store: Store; distance: string; duration: string }[] = [];
+      let closers: {
+        store: Store;
+        distance: RouteInfo;
+        duration: RouteInfo;
+      }[] = [];
 
       for (let i = 0; i <= stores.length; i++) {
         const store = stores[i];
@@ -53,17 +57,20 @@ export class StoreController {
         if (distance.value <= 100000) {
           closers.push({
             store,
-            distance: distance.text,
-            duration: duration.text,
+            distance,
+            duration,
           });
         }
       }
+
+      closers = closers.sort((a, b) => a.distance.value - b.distance.value);
 
       res.send(closers);
     } catch (err) {
       console.log(err);
       res.status(500).send({
-        message: "Houve um erro ao obter seu endereço, tente novamente!",
+        message:
+          "Houve um erro ao procuras lojas mais próximas, tente novamente!",
       });
     }
   };
