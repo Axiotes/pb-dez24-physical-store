@@ -15,23 +15,20 @@ export class StoreController {
     res: Response
   ): Promise<void> => {
     const cep: string = req.params.cep;
-    const apiKey = process.env.API_KEY;
+    const apiKey: string | undefined = process.env.API_KEY;
+
+    if (!apiKey) {
+      throw new Error("API Key undefined");
+    }
 
     try {
-      const viaCepRes: AxiosResponse<ViaCepResponse> = await axios.get(
-        `https://viacep.com.br/ws/${cep}/json`
+      const address: string = await this.getAddress(cep);
+      const location: Location = await this.getCoordinateLocation(
+        address,
+        apiKey
       );
-      const data = viaCepRes.data;
-      const address = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
-
-      const geocodeRes = await axios.get(
-        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-          address
-        )}&key=${apiKey}`
-      );
-      const location: Location = geocodeRes.data.results[0].geometry.location;
-
       const stores: Store[] = await this.getStores();
+
       let closers: {
         store: Store;
         distance: RouteInfo;
@@ -65,7 +62,7 @@ export class StoreController {
 
       closers = closers.sort((a, b) => a.distance.value - b.distance.value);
 
-      res.send(closers);
+      res.status(200).send(closers);
     } catch (err) {
       console.log(err);
       res.status(500).send({
@@ -74,6 +71,28 @@ export class StoreController {
       });
     }
   };
+
+  private async getCoordinateLocation(
+    address: string,
+    apiKey: string
+  ): Promise<Location> {
+    const geocodeRes = await axios.get(
+      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+        address
+      )}&key=${apiKey}`
+    );
+
+    return geocodeRes.data.results[0].geometry.location;
+  }
+
+  private async getAddress(cep: string): Promise<string> {
+    const viaCepRes: AxiosResponse<ViaCepResponse> = await axios.get(
+      `https://viacep.com.br/ws/${cep}/json`
+    );
+    const data = viaCepRes.data;
+
+    return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
+  }
 
   private async getStores(): Promise<Store[]> {
     return new Promise((resolve, reject) => {

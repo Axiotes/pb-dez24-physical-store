@@ -55,12 +55,12 @@ class StoreController {
         this.closerStore = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
+            if (!apiKey) {
+                throw new Error("API Key undefined");
+            }
             try {
-                const viaCepRes = yield axios_1.default.get(`https://viacep.com.br/ws/${cep}/json`);
-                const data = viaCepRes.data;
-                const address = `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
-                const geocodeRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
-                const location = geocodeRes.data.results[0].geometry.location;
+                const address = yield this.getAddress(cep);
+                const location = yield this.getCoordinateLocation(address, apiKey);
                 const stores = yield this.getStores();
                 let closers = [];
                 for (let i = 0; i <= stores.length; i++) {
@@ -80,7 +80,7 @@ class StoreController {
                     }
                 }
                 closers = closers.sort((a, b) => a.distance.value - b.distance.value);
-                res.send(closers);
+                res.status(200).send(closers);
             }
             catch (err) {
                 console.log(err);
@@ -88,6 +88,19 @@ class StoreController {
                     message: "Houve um erro ao procuras lojas mais próximas, tente novamente!",
                 });
             }
+        });
+    }
+    getCoordinateLocation(address, apiKey) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const geocodeRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`);
+            return geocodeRes.data.results[0].geometry.location;
+        });
+    }
+    getAddress(cep) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const viaCepRes = yield axios_1.default.get(`https://viacep.com.br/ws/${cep}/json`);
+            const data = viaCepRes.data;
+            return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
         });
     }
     getStores() {
