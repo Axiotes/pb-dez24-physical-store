@@ -83,7 +83,6 @@ class StoreController {
                 res.status(200).send(closers);
             }
             catch (err) {
-                console.log(err);
                 res.status(500).send({
                     message: "Houve um erro ao procuras lojas mais próximas, tente novamente!",
                 });
@@ -108,7 +107,6 @@ class StoreController {
             return new Promise((resolve, reject) => {
                 connection_1.default.query("SELECT * FROM stores", (err, result) => {
                     if (err) {
-                        console.log(err);
                         return reject(err);
                     }
                     resolve(result);
