@@ -6,6 +6,7 @@ import connection from "../db/connection";
 import { Store } from "../interfaces/store.interface";
 import { Location } from "../interfaces/location.interface";
 import { RouteInfo } from "../interfaces/route-info.interface";
+import logger from "../helpers/logger";
 
 dotenv.config();
 
@@ -62,7 +63,14 @@ export class StoreController {
 
       closers = closers.sort((a, b) => a.distance.value - b.distance.value);
 
-      res.status(200).send(closers);
+      const response =
+        closers.length === 0
+          ? { message: "Não há nenhuma loja a 100km de você" }
+          : closers;
+
+      logger.child({ req: req, res: response });
+
+      res.status(200).send(response);
     } catch (err) {
       res.status(500).send({
         message:
