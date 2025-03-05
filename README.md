@@ -70,7 +70,7 @@ API REST desenvolvida com objetivo gerenciar lojas físicas de um eCommerce, per
     npm run migrations
     ```
 
-8. Executar seeders **(Opcional)**
+8. Executar seeders **(Opcional)**  
     Caso deseje criar dados falso para teste ou desenvolvimento, utilizae o seguinte comando
     ```bash
     npm run seed
