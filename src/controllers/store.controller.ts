@@ -7,6 +7,8 @@ import { Store } from "../interfaces/store.interface";
 import { Location } from "../interfaces/location.interface";
 import { RouteInfo } from "../interfaces/route-info.interface";
 import logger from "../helpers/logger";
+import successLog from "../helpers/success-log";
+import errorLog from "../helpers/error-log";
 
 dotenv.config();
 
@@ -15,14 +17,15 @@ export class StoreController {
     req: Request<{ cep: string }>,
     res: Response
   ): Promise<void> => {
+    const startTime = new Date();
     const cep: string = req.params.cep;
     const apiKey: string | undefined = process.env.API_KEY;
 
-    if (!apiKey) {
-      throw new Error("API Key undefined");
-    }
-
     try {
+      if (!apiKey) {
+        throw new Error("API Key undefined");
+      }
+
       const address: string = await this.getAddress(cep);
       const location: Location = await this.getCoordinateLocation(
         address,
@@ -36,12 +39,8 @@ export class StoreController {
         duration: RouteInfo;
       }[] = [];
 
-      for (let i = 0; i <= stores.length; i++) {
+      for (let i = 0; i < stores.length; i++) {
         const store = stores[i];
-
-        if (!store) {
-          continue;
-        }
 
         const directionsRes = await axios.get(
           `https://maps.googleapis.com/maps/api/directions/json?origin=${location.lat},${location.lng}&destination=${store.lat},${store.lng}&key=${apiKey}`
@@ -65,14 +64,32 @@ export class StoreController {
 
       const response =
         closers.length === 0
-          ? { message: "Não há nenhuma loja a 100km de você" }
-          : closers;
+          ? {
+              status: "success",
+              message: "Não há nenhuma loja a 100km de você",
+            }
+          : { status: "success", data: closers };
 
-      logger.child({ req: req, res: response });
+      successLog({
+        method: req.method,
+        url: req.url,
+        params: req.params,
+        body: req.body,
+        executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
+      });
 
       res.status(200).send(response);
     } catch (err) {
+      errorLog({
+        method: req.method,
+        url: req.url,
+        params: req.params,
+        body: req.body,
+        executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
+        error: err,
+      });
       res.status(500).send({
+        status: "fail",
         message:
           "Houve um erro ao procuras lojas mais próximas, tente novamente!",
       });

@@ -9,11 +9,11 @@ const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.File({
-      filename: "/logs/success.log",
+      filename: `${__dirname}/../../logs/success.log`,
       level: "info",
     }),
     new winston.transports.File({
-      filename: "/logs/error.log",
+      filename: `${__dirname}/../../logs/error.log`,
       level: "error",
     }),
   ],
