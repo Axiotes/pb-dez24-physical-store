@@ -66,11 +66,12 @@ API REST desenvolvida com objetivo gerenciar lojas físicas de um eCommerce, per
     ```
 
 7. Executar migrations
+    Para a criação da estrutura do banco de dados, utilize o seguinte comando
     ```bash
     npm run migrations
     ```
 
-8. Executar seeders **(Opcional)**  
+9. Executar seeders **(Opcional)**  
     Caso deseje criar dados falso para teste ou desenvolvimento, utilizae o seguinte comando
     ```bash
     npm run seed
