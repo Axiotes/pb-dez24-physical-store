@@ -43,7 +43,7 @@ API desenvolvida com objetivo gerenciar lojas físicas de um eCommerce, permitin
     DB_PASSWORD="root"
     DATABASE="physical_store_db"
     ```
-    Na aplicação são utilizadas APIs do Google Maps, portanto é necessário obter uma API KEY para utilizá-las  
+    Na aplicação são utilizadas APIs do Google Maps (Geocoding e Directions), portanto é necessário obter uma API KEY para utilizá-las  
 
 4. Criação de um banco de dados  
     No seu SGBD do MySQL crie o banco de dados
