@@ -17,7 +17,7 @@ export class StoreController {
     req: Request<{ cep: string }>,
     res: Response
   ): Promise<void> => {
-    const startTime = new Date();
+    const executionTime = new Date();
     const cep: string = req.params.cep;
     const apiKey: string | undefined = process.env.API_KEY;
 
@@ -75,7 +75,7 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
+        executionTime,
       });
 
       res.status(200).send(response);
@@ -85,11 +85,8 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
-        error: {
-          message: (err as Error).message,
-          stack: (err as Error).stack,
-        },
+        executionTime,
+        error: err as Error,
       });
       res.status(500).send({
         status: "fail",

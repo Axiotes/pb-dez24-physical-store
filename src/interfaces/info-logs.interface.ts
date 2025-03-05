@@ -3,9 +3,6 @@ export interface InfoLogs {
   url: string;
   params: any;
   body: any;
-  executionTime: string;
-  error?: {
-    message: string;
-    stack?: string;
-  };
+  executionTime: Date;
+  error?: Error
 }

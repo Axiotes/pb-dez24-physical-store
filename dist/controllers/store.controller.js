@@ -55,7 +55,7 @@ dotenv.config();
 class StoreController {
     constructor() {
         this.closerStore = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const startTime = new Date();
+            const executionTime = new Date();
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
             try {
@@ -91,7 +91,7 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
+                    executionTime,
                 });
                 res.status(200).send(response);
             }
@@ -101,11 +101,8 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
-                    error: {
-                        message: err.message,
-                        stack: err.stack,
-                    },
+                    executionTime,
+                    error: err,
                 });
                 res.status(500).send({
                     status: "fail",
