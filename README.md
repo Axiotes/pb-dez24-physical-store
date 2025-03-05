@@ -1,5 +1,5 @@
 # Physical Store - Desafio 02
-API REST desenvolvida com objetivo gerenciar lojas físicas de um eCommerce, permitindo a busca de lojas dentro de um raio de 100 km a partir de um CEP fornecido pelo usuário
+API desenvolvida com objetivo gerenciar lojas físicas de um eCommerce, permitindo a busca de lojas dentro de um raio de 100 km a partir de um CEP fornecido pelo usuário
 
 ## Principais Tecnologias Utilizadas
 - Express
