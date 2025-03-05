@@ -49,25 +49,25 @@ exports.StoreController = void 0;
 const axios_1 = __importDefault(require("axios"));
 const dotenv = __importStar(require("dotenv"));
 const connection_1 = __importDefault(require("../db/connection"));
+const success_log_1 = __importDefault(require("../helpers/success-log"));
+const error_log_1 = __importDefault(require("../helpers/error-log"));
 dotenv.config();
 class StoreController {
     constructor() {
         this.closerStore = (req, res) => __awaiter(this, void 0, void 0, function* () {
+            const executionTime = new Date();
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
-            if (!apiKey) {
-                throw new Error("API Key undefined");
-            }
             try {
+                if (!apiKey) {
+                    throw new Error("API Key undefined");
+                }
                 const address = yield this.getAddress(cep);
                 const location = yield this.getCoordinateLocation(address, apiKey);
                 const stores = yield this.getStores();
                 let closers = [];
-                for (let i = 0; i <= stores.length; i++) {
+                for (let i = 0; i < stores.length; i++) {
                     const store = stores[i];
-                    if (!store) {
-                        continue;
-                    }
                     const directionsRes = yield axios_1.default.get(`https://maps.googleapis.com/maps/api/directions/json?origin=${location.lat},${location.lng}&destination=${store.lat},${store.lng}&key=${apiKey}`);
                     const distance = directionsRes.data.routes[0].legs[0].distance;
                     const duration = directionsRes.data.routes[0].legs[0].duration;
@@ -80,10 +80,32 @@ class StoreController {
                     }
                 }
                 closers = closers.sort((a, b) => a.distance.value - b.distance.value);
-                res.status(200).send(closers);
+                const response = closers.length === 0
+                    ? {
+                        status: "success",
+                        message: "Não há nenhuma loja a 100km de você",
+                    }
+                    : { status: "success", data: closers };
+                (0, success_log_1.default)({
+                    method: req.method,
+                    url: req.url,
+                    params: req.params,
+                    body: req.body,
+                    executionTime,
+                });
+                res.status(200).send(response);
             }
             catch (err) {
+                (0, error_log_1.default)({
+                    method: req.method,
+                    url: req.url,
+                    params: req.params,
+                    body: req.body,
+                    executionTime,
+                    error: err,
+                });
                 res.status(500).send({
+                    status: "fail",
                     message: "Houve um erro ao procuras lojas mais próximas, tente novamente!",
                 });
             }
