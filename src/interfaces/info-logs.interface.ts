@@ -4,5 +4,8 @@ export interface InfoLogs {
   params: any;
   body: any;
   executionTime: string;
-  error?: any;
+  error?: {
+    message: string;
+    stack?: string;
+  };
 }

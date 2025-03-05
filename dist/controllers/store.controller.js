@@ -102,7 +102,10 @@ class StoreController {
                     params: req.params,
                     body: req.body,
                     executionTime: `${new Date().getTime() - startTime.getTime()}ms`,
-                    error: err,
+                    error: {
+                        message: err.message,
+                        stack: err.stack,
+                    },
                 });
                 res.status(500).send({
                     status: "fail",
