@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from "axios";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { ViaCepResponse } from "../interfaces/viacep-response.interface";
 import * as dotenv from "dotenv";
 import connection from "../db/connection";
@@ -8,15 +8,15 @@ import { Location } from "../interfaces/location.interface";
 import { RouteInfo } from "../interfaces/route-info.interface";
 import successLog from "../helpers/success-log";
 import errorLog from "../helpers/error-log";
+import { ExtendedRequest } from "../interfaces/extended-request.interface";
 
 dotenv.config();
 
 export class StoreController {
   public closerStores = async (
-    req: Request<{ cep: string }>,
+    req: ExtendedRequest<{ cep: string }>,
     res: Response
   ): Promise<void> => {
-    const executionTime = new Date();
     const cep: string = req.params.cep;
     const apiKey: string | undefined = process.env.API_KEY;
 
@@ -74,7 +74,7 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime,
+        executionTime: req.executionTime as Date,
       });
 
       res.status(200).send(response);
@@ -84,7 +84,7 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime,
+        executionTime: req.executionTime as Date,
         error: err as Error,
       });
       res.status(500).send({

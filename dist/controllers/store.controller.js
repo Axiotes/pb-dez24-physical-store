@@ -55,7 +55,6 @@ dotenv.config();
 class StoreController {
     constructor() {
         this.closerStores = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const executionTime = new Date();
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
             try {
@@ -91,7 +90,7 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime,
+                    executionTime: req.executionTime,
                 });
                 res.status(200).send(response);
             }
@@ -101,7 +100,7 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime,
+                    executionTime: req.executionTime,
                     error: err,
                 });
                 res.status(500).send({
