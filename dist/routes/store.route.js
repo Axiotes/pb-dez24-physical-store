@@ -8,7 +8,7 @@ class StoreRoutes {
     constructor() {
         this.storeRouter = (0, express_1.Router)();
         this.storeController = new store_controller_1.StoreController();
-        this.storeRouter.get("/closer/:cep", valida_cep_middleware_1.validateCep, this.storeController.closerStore);
+        this.storeRouter.get("/closer/:cep", valida_cep_middleware_1.validateCep, this.storeController.closerStores);
     }
 }
 exports.StoreRoutes = StoreRoutes;

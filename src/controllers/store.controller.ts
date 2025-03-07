@@ -6,14 +6,13 @@ import connection from "../db/connection";
 import { Store } from "../interfaces/store.interface";
 import { Location } from "../interfaces/location.interface";
 import { RouteInfo } from "../interfaces/route-info.interface";
-import logger from "../helpers/logger";
 import successLog from "../helpers/success-log";
 import errorLog from "../helpers/error-log";
 
 dotenv.config();
 
 export class StoreController {
-  public closerStore = async (
+  public closerStores = async (
     req: Request<{ cep: string }>,
     res: Response
   ): Promise<void> => {
@@ -118,7 +117,7 @@ export class StoreController {
     return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
   }
 
-  private async getStores(): Promise<Store[]> {
+  private getStores(): Promise<Store[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM stores", (err: any, result: Store[]) => {
         if (err) {
