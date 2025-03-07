@@ -1,23 +1,22 @@
 import axios, { AxiosResponse } from "axios";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { ViaCepResponse } from "../interfaces/viacep-response.interface";
 import * as dotenv from "dotenv";
 import connection from "../db/connection";
 import { Store } from "../interfaces/store.interface";
 import { Location } from "../interfaces/location.interface";
 import { RouteInfo } from "../interfaces/route-info.interface";
-import logger from "../helpers/logger";
 import successLog from "../helpers/success-log";
 import errorLog from "../helpers/error-log";
+import { ExtendedRequest } from "../interfaces/extended-request.interface";
 
 dotenv.config();
 
 export class StoreController {
-  public closerStore = async (
-    req: Request<{ cep: string }>,
+  public closerStores = async (
+    req: ExtendedRequest<{ cep: string }>,
     res: Response
   ): Promise<void> => {
-    const executionTime = new Date();
     const cep: string = req.params.cep;
     const apiKey: string | undefined = process.env.API_KEY;
 
@@ -75,7 +74,7 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime,
+        executionTime: req.executionTime as Date,
       });
 
       res.status(200).send(response);
@@ -85,7 +84,7 @@ export class StoreController {
         url: req.url,
         params: req.params,
         body: req.body,
-        executionTime,
+        executionTime: req.executionTime as Date,
         error: err as Error,
       });
       res.status(500).send({
@@ -118,7 +117,7 @@ export class StoreController {
     return `${data.logradouro}, ${data.bairro}, ${data.localidade}, ${data.uf}`;
   }
 
-  private async getStores(): Promise<Store[]> {
+  private getStores(): Promise<Store[]> {
     return new Promise((resolve, reject) => {
       connection.query("SELECT * FROM stores", (err: any, result: Store[]) => {
         if (err) {

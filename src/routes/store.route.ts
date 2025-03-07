@@ -10,7 +10,7 @@ export class StoreRoutes {
     this.storeRouter.get(
       "/closer/:cep",
       validateCep,
-      this.storeController.closerStore
+      this.storeController.closerStores
     );
   }
 }

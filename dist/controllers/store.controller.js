@@ -54,8 +54,7 @@ const error_log_1 = __importDefault(require("../helpers/error-log"));
 dotenv.config();
 class StoreController {
     constructor() {
-        this.closerStore = (req, res) => __awaiter(this, void 0, void 0, function* () {
-            const executionTime = new Date();
+        this.closerStores = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const cep = req.params.cep;
             const apiKey = process.env.API_KEY;
             try {
@@ -91,7 +90,7 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime,
+                    executionTime: req.executionTime,
                 });
                 res.status(200).send(response);
             }
@@ -101,7 +100,7 @@ class StoreController {
                     url: req.url,
                     params: req.params,
                     body: req.body,
-                    executionTime,
+                    executionTime: req.executionTime,
                     error: err,
                 });
                 res.status(500).send({
@@ -125,14 +124,12 @@ class StoreController {
         });
     }
     getStores() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => {
-                connection_1.default.query("SELECT * FROM stores", (err, result) => {
-                    if (err) {
-                        return reject(err);
-                    }
-                    resolve(result);
-                });
+        return new Promise((resolve, reject) => {
+            connection_1.default.query("SELECT * FROM stores", (err, result) => {
+                if (err) {
+                    return reject(err);
+                }
+                resolve(result);
             });
         });
     }
